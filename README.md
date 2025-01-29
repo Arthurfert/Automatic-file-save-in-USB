@@ -12,6 +12,9 @@ The goal is to create a **secure recognition process** to ensure that it is **yo
 
 If the project goes well, a long-term goal would be to have an application that controls which files to merge and which not to merge, and to make it easier to attach new USB drives.
 
+> ***Very important : This kind of project raise high security concerns.***   
+> ***It's a very personnal project, and should not be implemented whithout considering the risks.***
+
 ## Contributors
 
 - Arthur FERT - *Main developper* -
