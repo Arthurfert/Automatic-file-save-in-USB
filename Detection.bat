@@ -1,6 +1,9 @@
 @echo off
 setlocal enabledelayedexpansion
 
+REM Ouvrir une nouvelle fenêtre de terminal et exécuter ce script
+start cmd /k "%~dp0%~nx0"
+
 for /f "tokens=*" %%D in ('wmic logicaldisk where "drivetype=2" get deviceid ^| find ":"') do (
     set "DEV=%%D"
     echo !DEV! is a USB device, info:
