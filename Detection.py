@@ -28,8 +28,13 @@ for device in drives: # on affiche les infos
 os.system('pause')
 
 my_file = Path("D:\.Spotlight-V100\Sync\key.txt") # ! la c'est un test, securite a venir
-if my_file.is_file():
+
+folderList = [('C:\\Users\\ferta\\Documents\\test','D:\\test'), ('C:\\Users\\ferta\\Documents\\TSE','D:\\TSE'),
+            ('C:\\Users\\ferta\\Documents\\PSI','D:\\PSI'), ('C:\\Users\\ferta\\Documents\\Inspire','D:\\INSPIRE')] # liste des dossiers a synchroniser
+# ! problem, erreur windows qui ne peut pas sync les dossiers dans les dossiers a synchroniser
+if my_file.is_file(): # si le fichier "clef" existe
     print("File exist")
-    sync('C:\\Users\\ferta\\Documents\\test', 'D:\\test', 'sync', purge = True) # syncronisation des fichiers
-    # * sync('source', 'destination', 'sync', purge = True) -> un seul sens
-    print("Sync done")
+    for folder in folderList: # on synchronise les dossiers
+        sync(folder[0], folder[1], 'sync', purge = False) # syncronisation des fichiers ordi -> disque
+        sync(folder[1], folder[0], 'sync', purge = False) # syncronisation des fichiers disque -> ordi
+        print("Sync done")
