@@ -31,10 +31,23 @@ my_file = Path("D:\.Spotlight-V100\Sync\key.txt") # ! la c'est un test, securite
 
 folderList = [('C:\\Users\\ferta\\Documents\\test','D:\\test'), ('C:\\Users\\ferta\\Documents\\TSE','D:\\TSE'),
             ('C:\\Users\\ferta\\Documents\\PSI','D:\\PSI'), ('C:\\Users\\ferta\\Documents\\Inspire','D:\\INSPIRE')] # liste des dossiers a synchroniser
-# ! problem, erreur windows qui ne peut pas sync les dossiers dans les dossiers a synchroniser
+
+def list_folders(directory):
+    return [f for f in Path(directory).iterdir() if f.is_dir()]
+
 if my_file.is_file(): # si le fichier "clef" existe
     print("File exist")
     for folder in folderList: # on synchronise les dossiers
-        sync(folder[0], folder[1], 'sync', purge = False) # syncronisation des fichiers ordi -> disque
-        sync(folder[1], folder[0], 'sync', purge = False) # syncronisation des fichiers disque -> ordi
+        try: # ! still not working
+            sync(folder[0], folder[1], 'sync', purge=False) # synchronisation des fichiers ordi -> disque
+            sync(folder[1], folder[0], 'sync', purge=False) # synchronisation des fichiers disque -> ordi
+        except Exception as e: # gestion des erreurs spécifiques 
+            print(f"Error syncing {folder[0]} to {folder[1]}: {e}")
+            for subfolder in list_folders(folder[0]):
+                try:
+                    print('Trying to sync subfolder:', subfolder)
+                    sync(subfolder, folder[1], 'sync', purge=False)
+                    sync(folder[1], subfolder, 'sync', purge=False)
+                except Exception as e:
+                    print(f"Error syncing subfolder {subfolder} to {folder[1]}: {e}")
         print("Sync done")
