@@ -35,15 +35,15 @@ folderList = [('C:\\Users\\ferta\\Documents\\test','D:\\test'), ('C:\\Users\\fer
 def list_folders(directory):
     return [f for f in Path(directory).iterdir() if f.is_dir()]
 
-if my_file.is_file(): # si le fichier "clef" existe
+if my_file.is_file(): # si le fichier "key" existe
     print("File exist")
     for folder in folderList: # on synchronise les dossiers
         if list_folders(folder[0]) == []: # si le dossier ne contient pas de dossiers
             if list_folders(folder[1]) == []: # si le dossier ne contient pas de dossiers
                 sync(folder[0], folder[1], 'sync', purge=False) # synchronisation des fichiers ordi -> disque
                 sync(folder[1], folder[0], 'sync', purge=False) # synchronisation des fichiers disque -> ordi
-        else:
-            for subfolder in list_folders(folder[0]):
+        else: # si le dossier contient des dossiers
+            for subfolder in list_folders(folder[0]): # on synchronise tous les sous-dossiers
                     print('Trying to sync subfolder:', subfolder)
                     sync(subfolder, folder[1]+'\\'+os.path.basename(subfolder), 'sync', purge=False)
                     sync(folder[1]+'\\'+os.path.basename(subfolder), subfolder, 'sync', purge=False)
