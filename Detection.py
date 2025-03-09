@@ -38,16 +38,19 @@ def list_folders(directory):
 if my_file.is_file(): # si le fichier "clef" existe
     print("File exist")
     for folder in folderList: # on synchronise les dossiers
-        try: # ! still not working
-            sync(folder[0], folder[1], 'sync', purge=False) # synchronisation des fichiers ordi -> disque
-            sync(folder[1], folder[0], 'sync', purge=False) # synchronisation des fichiers disque -> ordi
-        except Exception as e: # gestion des erreurs spécifiques 
-            print(f"Error syncing {folder[0]} to {folder[1]}: {e}")
+        if list_folders(folder[0]) == []: # si le dossier ne contient pas de dossiers
+            if list_folders(folder[1]) == []: # si le dossier ne contient pas de dossiers
+                sync(folder[0], folder[1], 'sync', purge=False) # synchronisation des fichiers ordi -> disque
+                sync(folder[1], folder[0], 'sync', purge=False) # synchronisation des fichiers disque -> ordi
+        else:
             for subfolder in list_folders(folder[0]):
-                try:
                     print('Trying to sync subfolder:', subfolder)
-                    sync(subfolder, folder[1], 'sync', purge=False)
-                    sync(folder[1], subfolder, 'sync', purge=False)
-                except Exception as e:
-                    print(f"Error syncing subfolder {subfolder} to {folder[1]}: {e}")
-        print("Sync done")
+                    sync(subfolder, folder[1]+'\\'+os.path.basename(subfolder), 'sync', purge=False)
+                    sync(folder[1]+'\\'+os.path.basename(subfolder), subfolder, 'sync', purge=False)
+            for subfolder in list_folders(folder[1]):
+                    print('Trying to sync subfolder:', subfolder)
+                    sync(subfolder, folder[0]+'\\'+os.path.basename(subfolder), 'sync', purge=False)
+                    sync(folder[0]+'\\'+os.path.basename(subfolder), subfolder, 'sync', purge=False)
+        print("Sync done in", folder[0], "and", folder[1])
+
+print("Successfully synchronized all folders")
