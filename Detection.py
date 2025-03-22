@@ -31,33 +31,32 @@ for device in drives: # on affiche les infos
 
 os.system('pause')
 
-folderList = [('C:\\Users\\ferta\\Documents\\test','D:\\test'), ('C:\\Users\\ferta\\Documents\\TSE','D:\\TSE'),
-            ('C:\\Users\\ferta\\Documents\\PSI','D:\\PSI'), ('C:\\Users\\ferta\\Documents\\Inspire','D:\\INSPIRE')] # liste des dossiers a synchroniser
+folderList = [('C:\\Users\\ferta\\Documents\\TSE','D:\\TSE'), ('C:\\Users\\ferta\\Documents\\PSI','D:\\PSI'),
+            ('C:\\Users\\ferta\\Documents\\Inspire','D:\\Inspire')] # liste des dossiers a synchroniser
 
 def list_folders(directory):
     return [f for f in Path(directory).iterdir() if f.is_dir()]
 
+def sync_folders(src, dst):
+    try:
+        sync(src, dst, 'sync', purge=False)
+        sync(dst, src, 'sync', purge=False)
+        for subfolder in list_folders(src):
+            sync_folders(subfolder, Path(dst) / subfolder.name)
+        for subfolder in list_folders(dst):
+            sync_folders(subfolder, Path(src) / subfolder.name)
+    except Exception as e:
+        print(f"Error syncing {src} and {dst}: {e}")
+
 try:
     for device in removable_drives:
-        if Path(device+"\Sync\\key.txt").is_file(): # si le fichier "key" existe # ! la c'est un test, sécurité a venir
+        if Path(device + "\\Sync\\key.txt").is_file(): # si le fichier "key" existe # ! la c'est un test, sécurité a venir
             print("File exist in", device, win32api.GetVolumeInformation(device)[0])
             for folder in folderList: # on synchronise les dossiers
-                if list_folders(folder[0]) == []: # si le dossier ne contient pas de dossiers
-                    if list_folders(folder[1]) == []: # si le dossier ne contient pas de dossiers
-                        sync(folder[0], folder[1], 'sync', purge=False) # synchronisation des fichiers ordi -> disque
-                        sync(folder[1], folder[0], 'sync', purge=False) # synchronisation des fichiers disque -> ordi
-                else: # si le dossier contient des dossiers
-                    for subfolder in list_folders(folder[0]): # on synchronise tous les sous-dossiers
-                            print('Trying to sync subfolder:', subfolder)
-                            sync(subfolder, folder[1]+'\\'+os.path.basename(subfolder), 'sync', purge=False)
-                            sync(folder[1]+'\\'+os.path.basename(subfolder), subfolder, 'sync', purge=False)
-                    for subfolder in list_folders(folder[1]):
-                            print('Trying to sync subfolder:', subfolder)
-                            sync(subfolder, folder[0]+'\\'+os.path.basename(subfolder), 'sync', purge=False)
-                            sync(folder[0]+'\\'+os.path.basename(subfolder), subfolder, 'sync', purge=False)
+                sync_folders(folder[0], folder[1])
                 print("Sync done in", folder[0], "and", folder[1])
             print("Successfully synchronized all folders")
-        else :
+        else:
             print("Key doesn't exist or couldn't be found")
         os.system('pause')
         print("-"*72)
