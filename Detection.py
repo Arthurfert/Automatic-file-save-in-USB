@@ -4,6 +4,11 @@ import win32file
 from pathlib import Path
 from dirsync import sync
 
+# TODO : ajouter un systeme de clé pour la synchronisation
+# TODO : ajouter un systeme de log
+# TODO : ajouter un systeme de configuration
+# TODO : ajouter une interface graphique ?
+
 os.system("cls")
 drive_types = { # liste des types de disques
                 win32file.DRIVE_UNKNOWN : "Unknown\n   Drive type can't be determined.",
@@ -38,6 +43,7 @@ def list_folders(directory):
     return [f for f in Path(directory).iterdir() if f.is_dir()]
 
 def sync_folders(src, dst):
+    # TODO : créer un dossier si il n'existe pas
     try:
         sync(src, dst, 'sync', purge=False)
         sync(dst, src, 'sync', purge=False)
