@@ -8,6 +8,7 @@ from dirsync import sync
 # TODO : ajouter un systeme de log
 # TODO : ajouter un systeme de configuration
 # TODO : ajouter une interface graphique ?
+# TODO : optiisation du temps de synchronisation
 
 os.system("cls")
 drive_types = { # liste des types de disques
