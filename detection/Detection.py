@@ -3,6 +3,7 @@ import win32api
 import win32file
 from pathlib import Path
 from dirsync import sync
+from logger.logger import logger
 
 # TODO : ajouter un systeme de clé pour la synchronisation
 # TODO : ajouter un systeme de log
@@ -53,21 +54,21 @@ def sync_folders(src, dst):
         for subfolder in list_folders(dst):
             sync_folders(subfolder, Path(src) / subfolder.name)
     except Exception as e:
-        print(f"Error syncing {src} and {dst}: {e}")
+        logger.error(f"Error syncing {src} and {dst}: {e}")
 
 try:
     for device in removable_drives:
         if Path(device + "\\Sync\\key.txt").is_file(): # si le fichier "key" existe # ! la c'est un test, sécurité a venir
-            print("File exist in", device, win32api.GetVolumeInformation(device)[0])
+            logger.info("File exist in", device, win32api.GetVolumeInformation(device)[0])
             for folder in folderList: # on synchronise les dossiers
                 sync_folders(folder[0], folder[1])
-                print("Sync done in", folder[0], "and", folder[1])
-            print("Successfully synchronized all folders")
+                logger.info("Sync done in", folder[0], "and", folder[1])
+            logger.info("Successfully synchronized all folders")
         else:
-            print("Key doesn't exist or couldn't be found")
+            logger.warning("Key doesn't exist or couldn't be found")
         os.system('pause')
         print("-"*72)
-    print("Sync completed in all valid drives")
+    logger.info("Sync completed in all valid drives")
 except Exception as e:
-    print(f"Error: {e}")
+    logger.error(f"Error: {e}")
     print("-"*72)
